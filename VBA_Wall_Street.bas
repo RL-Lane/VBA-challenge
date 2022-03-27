@@ -2,6 +2,7 @@ Attribute VB_Name = "Module1"
 Sub stock_summary()
 
 For Each ws In Worksheets
+    
     'label top row in each worksheet
     ws.Range("i1").Value = "Ticker"
     ws.Range("j1").Value = "Yearly Change"
@@ -33,10 +34,13 @@ For Each ws In Worksheets
             
             'summary percent change
             ws.Cells(summary_row, 11).Value = Str(Round(100 * ws.Cells(summary_row, 10).Value / ws.Cells(ticker_first_row, 3), 2)) + "%"
+            
             If (ws.Cells(summary_row, 10).Value < 0) Then
-                ws.Cells(summary_row, 10).Interior.Color = RGB(255, 0, 0)
+               ws.Cells(summary_row, 10).Interior.Color = RGB(255, 0, 0)
             ElseIf (ws.Cells(summary_row, 10).Value > 0) Then
                 ws.Cells(summary_row, 10).Interior.Color = RGB(0, 255, 0)
+            Else
+                ws.Cells(summary_row, 10).Interior.Color = xlNone
             End If
             'summary stock volume
             ws.Cells(summary_row, 12).NumberFormat = "#,##0"
@@ -46,7 +50,7 @@ For Each ws In Worksheets
             total_volume = 0
             ticker_first_row = i + 1
             summary_row = summary_row + 1
-            summary_count = summary_count + 1
+            'summary_count = summary_count + 1
             
         End If
     
@@ -65,8 +69,6 @@ For Each ws In Worksheets
     
     Dim vols As Variant
     Dim changes As Variant
-    'Erase vols
-    'Erase changes
     
     
     'load data into arrays for searching
@@ -77,16 +79,16 @@ For Each ws In Worksheets
     
     'report greatest % increase and matching ticker
     ws.Range("q2").Value = Application.Max(changes)
-    ws.Range("p2").Value = ws.Cells(Application.Match(ws.Range("q2").Value, changes, 0), 9).Value
+    ws.Range("p2").Value = ws.Cells(Application.Match(ws.Range("q2").Value, changes, 0) + 1, 9).Value
     ws.Range("q2:q3").NumberFormat = "#,##0.00%"
 
     'report greatest % decrease and matching ticker
     ws.Range("q3").Value = Application.Min(changes)
-    ws.Range("p3").Value = ws.Cells(Application.Match(ws.Range("q3").Value, changes, 0), 9).Value
+    ws.Range("p3").Value = ws.Cells(Application.Match(ws.Range("q3").Value, changes, 0) + 1, 9).Value
     
     'report greatest total volume
     ws.Range("q4").Value = Application.Max(vols)
-    ws.Range("p4").Value = ws.Cells(Application.Match(ws.Range("q4").Value, vols, 0), 9).Value
+    ws.Range("p4").Value = ws.Cells(Application.Match(ws.Range("q4").Value, vols, 0) + 1, 9).Value
     ws.Range("q4").NumberFormat = "#,##0"
 
     
